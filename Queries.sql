@@ -60,7 +60,13 @@ WHERE not exists (select 1 from borrowings inner join author_table aut1 on bor.I
 -- 3.1.5
 
 
--- 3.1.6 / hardcore 
+-- 3.1.6 
+select ct1.category, ct2.category, count(bor.borrowed_id) from borrowings bor 
+inner join books b on b.ISBN = bor.ISBN 
+inner join category_table ct1 on ct1.ISBN = b.ISBN 
+cross join category_table ct2 on ct1.category <> ct2.category  AND ct1.category < ct2.category AND ct1.ISBN = ct2.ISBN
+group by ct1.category,ct2.category
+limit 3;
 
 -- 3.1.7
 -- select all the authors with their respectable amount of books 
