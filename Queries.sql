@@ -58,7 +58,12 @@ LEFT JOIN borrowings bor ON bor.ISBN = aut.ISBN
 WHERE not exists (select 1 from borrowings inner join author_table aut1 on bor.ISBN = aut1.ISBN );
 
 -- 3.1.5
-
+select op.operator_id, us.First_name, us.Last_name,count(bor.borrowed_id) from users us
+inner join operator op on op.operator_id = us.user_id
+inner join borrowings bor on bor.operator_id = op.operator_id  
+inner join operator op1 on op1.operator_id = op.operator_id 
+group by bor.operator_id 
+having count(bor.borrowed_id) > 20; 
 
 -- 3.1.6 
 select ct1.category, ct2.category, count(bor.borrowed_id) from borrowings bor 
@@ -93,4 +98,28 @@ from aut_five_less_max aflm
 join most_books_author mba 
 on mba.max_books_author - 5 > aflm.count_of_books_per_author;
             
- 
+ -- 3.2.1
+select title,author from books inner join author_table on books.ISBN = author_table.ISBN;
+
+-- 3.2.2 
+select * from borrowings;
+select bor.school_users_id, us.First_name, us.Last_name from users us
+inner join borrowings bor on bor.school_users_id = us.user_id
+where due_date < curdate() and return_date is null
+having count(bor.borrowed_id) > 1;
+-- thelei diorthwsi, einai lathos 
+
+-- 3.2.3
+select school_users_id, avg(z.num_of_ratings_per_borrower) as avg_num_of_ratings_per_borrower from 
+	(select school_users_id, count(rating_id) as num_of_ratings_per_borrower from ratings group by school_users_id) z
+    group by school_users_id;
+
+-- 3.3.1
+select * from reservations;
+
+-- 3.3.2
+select bor.school_users_id, us.First_name, us.Last_name, b.ISBN, b.title from borrowings bor 
+inner join books b on b.ISBN = bor.ISBN
+inner join users us on us.user_id = bor.school_users_id
+group by bor.school_users_id; 
+-- vasi toy parapanw tha psaxnei kai kala o mathitis stin kartela mesw tou student id tou h tou onomatepwnymou tou
